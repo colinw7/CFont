@@ -52,13 +52,6 @@ struct CFontDef {
 };
 
 class CFontFamily {
- private:
-  typedef std::map<std::string,CFontFamily *> FamilyMap;
-  typedef std::map<CFontDefKey,CFontDef *>    FontDefMap;
-
-  std::string name_;
-  FontDefMap  font_defs_;
-
  public:
   static CFontFamily &lookup(const std::string &name);
 
@@ -71,6 +64,13 @@ class CFontFamily {
   const std::string &getName() const { return name_; }
 
   CFontDef &lookupFontDef(CFontStyle style, uint size=CFONT_DEF_SIZE, uint angle=0);
+
+ private:
+  typedef std::map<std::string,CFontFamily *> FamilyMap;
+  typedef std::map<CFontDefKey,CFontDef *>    FontDefMap;
+
+  std::string name_;
+  FontDefMap  font_defs_;
 };
 
 class CFont;
@@ -78,15 +78,6 @@ class CFont;
 typedef CRefPtr<CFont> CFontPtr;
 
 class CFont {
- private:
-  uint        id_;
-  std::string family_;
-  CFontDef    font_def_;
-  double      char_angle_;
-  std::string x_font_name_;
-
-  friend class CFontMgr;
-
  protected:
   CFont(const std::string &family, CFontStyle style, double size,
         double angle=0, double char_angle=0, int x_res=100, int y_res=100);
@@ -112,22 +103,22 @@ class CFont {
  public:
   virtual CFontPtr dup() const;
   virtual CFontPtr dup(const std::string &family, CFontStyle style, double size,
-                       double angle, double char_angle, int x_res, int y_res) const;
+                       double angle=0, double char_angle=0, int x_res=100, int y_res=100) const;
   virtual CFontPtr dup(const std::string &full_name) const;
 
  public:
-  virtual uint               getId    () const { return id_                  ; }
-  virtual const std::string &getFamily() const { return family_              ; }
+  virtual uint               getId    () const { return id_    ; }
+  virtual const std::string &getFamily() const { return family_; }
 
-  virtual CFontStyle    getStyle     () const { return font_def_.style      ; }
-  virtual double        getSize      () const { return font_def_.size       ; }
-  virtual uint          getISize     () const { return uint(font_def_.size) ; }
-  virtual double        getAngle     () const { return font_def_.angle      ; }
-  virtual uint          getIAngle    () const { return uint(font_def_.angle); }
-  virtual double        getCharAngle () const { return char_angle_          ; }
-  virtual uint          getICharAngle() const { return uint(char_angle_)    ; }
-  virtual uint          getXRes      () const { return font_def_.x_res      ; }
-  virtual uint          getYRes      () const { return font_def_.y_res      ; }
+  virtual CFontStyle getStyle     () const { return font_def_.style     ; }
+  virtual double     getSize      () const { return font_def_.size      ; }
+  virtual uint       getISize     () const { return uint(getSize())     ; }
+  virtual double     getAngle     () const { return font_def_.angle     ; }
+  virtual uint       getIAngle    () const { return uint(getAngle())    ; }
+  virtual double     getCharAngle () const { return char_angle_         ; }
+  virtual uint       getICharAngle() const { return uint(getCharAngle()); }
+  virtual uint       getXRes      () const { return font_def_.x_res     ; }
+  virtual uint       getYRes      () const { return font_def_.y_res     ; }
 
  protected:
   virtual void setSize(double size) { font_def_.size = size; }
@@ -136,65 +127,27 @@ class CFont {
   CFontPtr rotated(double dangle=90) const;
 
  public:
-  virtual double getCharWidth() const {
-    return getSize();
-  }
+  virtual double getCharWidth   () const { return getSize(); }
+  virtual uint   getICharWidth  () const { return uint(getCharWidth()); }
+  virtual double getCharAscent  () const { return getSize(); }
+  virtual uint   getICharAscent () const { return uint(getCharAscent()); }
+  virtual double getCharDescent () const { return 0; }
+  virtual uint   getICharDescent() const { return uint(getCharDescent()); }
+  virtual double getCharHeight  () const { return getCharAscent() + getCharDescent(); }
+  virtual uint   getICharHeight () const { return uint(getCharHeight()); }
 
-  virtual uint getICharWidth() const {
-    return uint(getCharWidth());
-  }
+  virtual double getStringWidth (const std::string &str) const { return str.size()*getCharWidth(); }
+  virtual uint   getIStringWidth(const std::string &str) const { return uint(getStringWidth(str)); }
 
-  virtual double getCharAscent() const {
-    return getSize();
-  }
+  virtual void getStringBBox (const std::string &str, double x[4], double y[4]) const;
+  virtual void getIStringBBox(const std::string &str, int    x[4], int    y[4]) const;
 
-  virtual uint getICharAscent() const {
-    return uint(getCharAscent());
-  }
+  virtual bool isProportional() const { return false; }
 
-  virtual double getCharDescent() const {
-    return 0;
-  }
+  virtual bool isBold  () const { return (getStyle() & CFONT_STYLE_BOLD  ); }
+  virtual bool isItalic() const { return (getStyle() & CFONT_STYLE_ITALIC); }
 
-  virtual uint getICharDescent() const {
-    return uint(getCharDescent());
-  }
-
-  virtual double getCharHeight() const {
-    return getCharAscent() + getCharDescent();
-  }
-
-  virtual uint getICharHeight() const {
-    return uint(getCharHeight());
-  }
-
-  virtual double getStringWidth(const std::string &str) const {
-    return str.size()*getCharWidth();
-  }
-
-  virtual uint getIStringWidth(const std::string &str) const {
-    return uint(getStringWidth(str));
-  }
-
-  virtual void getStringBBox(const std::string &str, double x[4], double y[4]) const;
-
-  virtual void getIStringBBox(const std::string &str, int x[4], int y[4]) const;
-
-  virtual bool isProportional() const {
-    return false;
-  }
-
-  virtual bool isBold() const {
-    return (getStyle() & CFONT_STYLE_BOLD);
-  }
-
-  virtual bool isItalic() const {
-    return (getStyle() & CFONT_STYLE_ITALIC);
-  }
-
-  virtual double getCharAspect() const {
-    return (getCharWidth()/getCharHeight());
-  }
+  virtual double getCharAspect() const { return (getCharWidth()/getCharHeight()); }
 
   virtual std::string getXFontName() const;
 
@@ -228,17 +181,18 @@ class CFont {
  public:
   static CFontStyle  stringToFontStyle(const std::string &style);
   static std::string fontStyleToString(CFontStyle style);
+
+ private:
+  friend class CFontMgr;
+
+  uint        id_;
+  std::string family_;
+  CFontDef    font_def_;
+  double      char_angle_;
+  std::string x_font_name_;
 };
 
 class CFontSet {
- private:
-  std::string family_;
-  uint        size_;
-  CFontPtr    normal_;
-  CFontPtr    bold_;
-  CFontPtr    italic_;
-  CFontPtr    boldi_;
-
  public:
   CFontSet(const std::string &family="courier", uint size=12);
 
@@ -249,6 +203,14 @@ class CFontSet {
   uint getSize() const { return size_; }
 
   CFontPtr getFont(CFontStyle style) const;
+
+ private:
+  std::string family_;
+  uint        size_;
+  CFontPtr    normal_;
+  CFontPtr    bold_;
+  CFontPtr    italic_;
+  CFontPtr    boldi_;
 };
 
 #endif
