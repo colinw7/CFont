@@ -7,13 +7,6 @@
 #include <list>
 
 class CFontMgr {
- private:
-  typedef std::list<CFontPtr> FontList;
-
-  FontList font_list_;
-  CFontPtr prototype_;
-  bool     debug_;
-
  public:
   static CFontMgr *getInstance() {
     static CFontMgr *mgr;
@@ -41,6 +34,13 @@ class CFontMgr {
  private:
   bool addFont(CFontPtr font);
   bool deleteFont(CFontPtr font);
+
+ private:
+  typedef std::list<CFontPtr> FontList;
+
+  FontList font_list_;
+  CFontPtr prototype_;
+  bool     debug_;
 };
 
 #endif
