@@ -14,18 +14,17 @@ CFontMgr::
 lookupFont(const std::string &family, CFontStyle style, double size,
            double angle, double char_angle, uint x_res, uint y_res)
 {
-  FontList::iterator pfont1 = font_list_.begin();
-  FontList::iterator pfont2 = font_list_.end();
+  auto p = font_list_.begin();
 
-  for ( ; pfont1 != pfont2; ++pfont1)
-    if ((*pfont1)->getFamily    () == family           &&
-        (*pfont1)->getStyle     () == style            &&
-        (*pfont1)->getISize     () == uint(size)       &&
-        (*pfont1)->getIAngle    () == uint(angle)      &&
-        (*pfont1)->getICharAngle() == uint(char_angle) &&
-        (*pfont1)->getXRes      () == x_res            &&
-        (*pfont1)->getYRes      () == y_res)
-      return *pfont1;
+  for ( ; p != font_list_.end(); ++p)
+    if ((*p)->getFamily    () == family           &&
+        (*p)->getStyle     () == style            &&
+        (*p)->getISize     () == uint(size)       &&
+        (*p)->getIAngle    () == uint(angle)      &&
+        (*p)->getICharAngle() == uint(char_angle) &&
+        (*p)->getXRes      () == x_res            &&
+        (*p)->getYRes      () == y_res)
+      return *p;
 
   CFontPtr ptr;
 
@@ -49,12 +48,11 @@ CFontPtr
 CFontMgr::
 lookupFont(const std::string &full_name)
 {
-  FontList::iterator pfont1 = font_list_.begin();
-  FontList::iterator pfont2 = font_list_.end();
+  auto p = font_list_.begin();
 
-  for ( ; pfont1 != pfont2; ++pfont1)
-    if ((*pfont1)->getXFontName() == full_name)
-      return *pfont1;
+  for ( ; p != font_list_.end(); ++p)
+    if ((*p)->getXFontName() == full_name)
+      return *p;
 
   CFontPtr ptr;
 

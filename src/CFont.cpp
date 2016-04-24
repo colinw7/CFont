@@ -38,11 +38,10 @@ lookup(const std::string &name)
 {
   static FamilyMap families_;
 
-  FamilyMap::iterator p1 = families_.find(name);
-  FamilyMap::iterator p2 = families_.end ();
+  auto p = families_.find(name);
 
-  if (p1 != p2)
-    return *(p1->second);
+  if (p != families_.end())
+    return *(p->second);
 
   CFontFamily *family = new CFontFamily(name);
 
@@ -57,11 +56,10 @@ lookupFontDef(CFontStyle style, uint size, uint angle)
 {
   CFontDefKey font_def(style, size, angle);
 
-  FontDefMap::iterator p1 = font_defs_.find(font_def);
-  FontDefMap::iterator p2 = font_defs_.end ();
+  auto p = font_defs_.find(font_def);
 
-  if (p1 != p2)
-    return *(p1->second);
+  if (p != font_defs_.end())
+    return *(p->second);
 
   CFontDef *font = new CFontDef(style, size, angle);
 

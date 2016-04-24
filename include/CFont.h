@@ -11,9 +11,9 @@
 class CPixelRenderer;
 
 struct CFontDefKey {
-  CFontStyle style;
-  uint       size;
-  uint       angle;
+  CFontStyle style { CFONT_STYLE_NORMAL };
+  uint       size  { CFONT_DEF_SIZE };
+  uint       angle { 0 };
 
   CFontDefKey(CFontStyle style1, uint size1, uint angle1) :
    style(style1), size(size1), angle(angle1) {
@@ -33,12 +33,14 @@ struct CFontDefKey {
   }
 };
 
+//---
+
 struct CFontDef {
-  CFontStyle style;
-  double     size;
-  double     angle;
-  uint       x_res;
-  uint       y_res;
+  CFontStyle style { CFONT_STYLE_NORMAL };
+  double     size  { CFONT_DEF_SIZE };
+  double     angle { 0 };
+  uint       x_res { 100 };
+  uint       y_res { 100 };
 
   CFontDef(CFontStyle style1=CFONT_STYLE_NORMAL, double size1=CFONT_DEF_SIZE,
            double angle1=0, uint x_res1=100, uint y_res1=100) :
@@ -50,6 +52,8 @@ struct CFontDef {
    x_res(font_def.x_res), y_res(font_def.y_res) {
   }
 };
+
+//---
 
 class CFontFamily {
  public:
@@ -73,9 +77,13 @@ class CFontFamily {
   FontDefMap  font_defs_;
 };
 
+//---
+
 class CFont;
 
 typedef CRefPtr<CFont> CFontPtr;
+
+//---
 
 class CFont {
  protected:
@@ -147,6 +155,13 @@ class CFont {
   virtual bool isBold  () const { return (getStyle() & CFONT_STYLE_BOLD  ); }
   virtual bool isItalic() const { return (getStyle() & CFONT_STYLE_ITALIC); }
 
+  virtual bool isUnderline() const { return (getStyle() & CFONT_STYLE_UNDERLINE); }
+  virtual bool isStrikeout() const { return (getStyle() & CFONT_STYLE_STRIKEOUT); }
+  virtual bool isOverline () const { return (getStyle() & CFONT_STYLE_OVERLINE ); }
+
+  virtual bool isSubscript  () const { return (getStyle() & CFONT_STYLE_SUBSCRIPT  ); }
+  virtual bool isSuperscript() const { return (getStyle() & CFONT_STYLE_SUPERSCRIPT); }
+
   virtual double getCharAspect() const { return (getCharWidth()/getCharHeight()); }
 
   virtual std::string getXFontName() const;
@@ -185,10 +200,10 @@ class CFont {
  private:
   friend class CFontMgr;
 
-  uint        id_;
+  uint        id_ { 0 };
   std::string family_;
   CFontDef    font_def_;
-  double      char_angle_;
+  double      char_angle_ { 0 };
   std::string x_font_name_;
 };
 
@@ -205,8 +220,8 @@ class CFontSet {
   CFontPtr getFont(CFontStyle style) const;
 
  private:
-  std::string family_;
-  uint        size_;
+  std::string family_ { "courier" };
+  uint        size_   { 12 };
   CFontPtr    normal_;
   CFontPtr    bold_;
   CFontPtr    italic_;
