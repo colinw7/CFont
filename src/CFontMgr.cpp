@@ -1,5 +1,22 @@
 #include <CFontMgr.h>
 
+CFontMgr *
+CFontMgr::
+getInstance()
+{
+  static CFontMgr *mgr;
+
+  if (! mgr)
+    mgr = new CFontMgr;
+
+  return mgr;
+}
+
+CFontMgr::
+CFontMgr()
+{
+}
+
 void
 CFontMgr::
 setPrototype(CFontPtr ptr)

@@ -8,18 +8,9 @@
 
 class CFontMgr {
  public:
-  static CFontMgr *getInstance() {
-    static CFontMgr *mgr;
+  static CFontMgr *getInstance();
 
-    if (mgr == NULL)
-      mgr = new CFontMgr;
-
-    return mgr;
-  }
-
-  CFontMgr() :
-   font_list_(), prototype_(), debug_(false) {
-  }
+  CFontMgr();
 
  ~CFontMgr() { }
 
@@ -40,7 +31,7 @@ class CFontMgr {
 
   FontList font_list_;
   CFontPtr prototype_;
-  bool     debug_;
+  bool     debug_ { false };
 };
 
 #endif
