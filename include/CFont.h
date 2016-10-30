@@ -3,6 +3,7 @@
 
 #include <CRefPtr.h>
 #include <CFontStyle.h>
+#include <CImageLib.h>
 #include <sys/types.h>
 #include <map>
 
@@ -163,6 +164,17 @@ class CFont {
   virtual bool isSuperscript() const { return (getStyle() & CFONT_STYLE_SUPERSCRIPT); }
 
   virtual double getCharAspect() const { return (getCharWidth()/getCharHeight()); }
+
+  virtual CImagePtr getStringImage(const std::string &) {
+    std::cerr << "undefined: CFont::getStringImage" << std::endl;
+    return CImagePtr();
+  }
+
+  virtual CImagePtr getCharImage(char c) {
+    std::string str(&c, 1);
+
+    return getStringImage(str);
+  }
 
   virtual std::string getXFontName() const;
 
