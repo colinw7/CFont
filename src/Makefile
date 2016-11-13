@@ -20,7 +20,9 @@ OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 CPPFLAGS = \
 -std=c++11 \
 -I$(INC_DIR) \
+-I../../CImageLib/include \
 -I../../CStrUtil/include \
+-I../../CFile/include \
 -I../../CMath/include \
 -I../../COS/include \
 -I../../CUtil/include \
