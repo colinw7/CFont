@@ -14,6 +14,7 @@ all: $(LIB_DIR)/libCFont.a
 SRC = \
 CFont.cpp \
 CFontMgr.cpp \
+CFreeType.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
@@ -21,6 +22,7 @@ CPPFLAGS = \
 -std=c++11 \
 -I$(INC_DIR) \
 -I../../CImageLib/include \
+-I../../CConfig/include \
 -I../../CStrUtil/include \
 -I../../CFile/include \
 -I../../CMath/include \
