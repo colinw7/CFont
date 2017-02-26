@@ -28,6 +28,7 @@ CPPFLAGS = \
 -I../../CMath/include \
 -I../../COS/include \
 -I../../CUtil/include \
+-I/usr/include/freetype2 \
 
 clean:
 	$(RM) -f $(OBJ_DIR)/*.o
