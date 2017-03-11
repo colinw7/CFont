@@ -3,6 +3,7 @@
 
 #include <CStrUtil.h>
 #include <CMathGen.h>
+#include <CMathMacros.h>
 #include <cmath>
 
 CFontFamily::
