@@ -60,11 +60,11 @@ class CFontFamily {
  public:
   static CFontFamily &lookup(const std::string &name);
 
-  CFontFamily(const std::string &name);
+  explicit CFontFamily(const std::string &name);
   CFontFamily(const CFontFamily &family);
  ~CFontFamily();
 
-  const CFontFamily &operator=(const CFontFamily &family);
+  CFontFamily &operator=(const CFontFamily &family);
 
   const std::string &getName() const { return name_; }
 
@@ -165,6 +165,8 @@ class CFont {
 
   virtual double getCharAspect() const { return (getCharWidth()/getCharHeight()); }
 
+  virtual std::string getXFontName() const;
+
   virtual CImagePtr getStringImage(const std::string &) {
     std::cerr << "undefined: CFont::getStringImage" << std::endl;
     return CImagePtr();
@@ -175,8 +177,6 @@ class CFont {
 
     return getStringImage(str);
   }
-
-  virtual std::string getXFontName() const;
 
   void print(std::ostream &os) const {
     os << getFamily() << ":" << fontStyleToString(getStyle()) << ":" <<

@@ -48,7 +48,8 @@ lookupFont(const std::string &family, CFontStyle style, double size,
   if (prototype_.isValid())
     ptr = prototype_->dup(family, style, size, angle, char_angle, x_res, y_res);
   else {
-    std::cerr << "Warning: no font prototype" << std::endl;
+    if (getenv("CFONT_PROTO_DEBUG"))
+      std::cerr << "Warning: no font prototype" << std::endl;
 
     CFont *font =
       new CFont(family, style, size, angle, char_angle, x_res, y_res);

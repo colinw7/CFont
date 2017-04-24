@@ -23,7 +23,7 @@ CFontFamily(const CFontFamily &family) :
 {
 }
 
-const CFontFamily &
+CFontFamily &
 CFontFamily::
 operator=(const CFontFamily &family)
 {
