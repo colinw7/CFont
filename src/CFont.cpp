@@ -409,24 +409,22 @@ setup(const std::string &family, uint size)
   family_ = family;
   size_   = size;
 
-  normal_ = CFontMgrInst->lookupFont(family_, CFONT_STYLE_NORMAL     , size_);
-  bold_   = CFontMgrInst->lookupFont(family_, CFONT_STYLE_BOLD       , size_);
-  italic_ = CFontMgrInst->lookupFont(family_, CFONT_STYLE_ITALIC     , size_);
-  boldi_  = CFontMgrInst->lookupFont(family_, CFONT_STYLE_BOLD_ITALIC, size_);
+  styleFont_.clear();
 }
 
 CFontPtr
 CFontSet::
 getFont(CFontStyle style) const
 {
-  if      (style == CFONT_STYLE_NORMAL)
-    return normal_;
-  else if (style == CFONT_STYLE_BOLD)
-    return bold_;
-  else if (style == CFONT_STYLE_ITALIC)
-    return italic_;
-  else if (style == CFONT_STYLE_BOLD_ITALIC)
-    return boldi_;
-  else
-    return normal_;
+  CFontSet *th = const_cast<CFontSet *>(this);
+
+  auto p = th->styleFont_.find(style);
+
+  if (p == styleFont_.end()) {
+    CFontPtr font = CFontMgrInst->lookupFont(family_, style, size_);
+
+    p = th->styleFont_.insert(p, StyleFont::value_type(style, font));
+  }
+
+  return (*p).second;
 }

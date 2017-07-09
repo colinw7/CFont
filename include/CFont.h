@@ -232,12 +232,11 @@ class CFontSet {
   CFontPtr getFont(CFontStyle style) const;
 
  private:
+  typedef std::map<CFontStyle,CFontPtr> StyleFont;
+
   std::string family_ { "courier" };
   uint        size_   { 12 };
-  CFontPtr    normal_;
-  CFontPtr    bold_;
-  CFontPtr    italic_;
-  CFontPtr    boldi_;
+  StyleFont   styleFont_;
 };
 
 #endif
