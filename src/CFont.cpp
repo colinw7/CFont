@@ -1,10 +1,7 @@
 #include <CFont.h>
 #include <CFontMgr.h>
-
+#include <CMathRound.h>
 #include <CStrUtil.h>
-#include <CMathGen.h>
-#include <CMathMacros.h>
-#include <cmath>
 
 CFontFamily::
 CFontFamily(const std::string &name) :
@@ -166,8 +163,8 @@ getStringBBox(const std::string &str, double x[4], double y[4]) const
 
   double angle = getAngle();
 
-  double c = cos(DEG_TO_RAD(angle));
-  double s = sin(DEG_TO_RAD(angle));
+  double c = CMathGen::DCos(angle);
+  double s = CMathGen::DSin(angle);
 
   x[0] =     + d*s; y[0] =     - d*c;
   x[1] = w*c + d*s; y[1] = w*s - d*c;
@@ -184,8 +181,8 @@ getIStringBBox(const std::string &str, int x[4], int y[4]) const
   getStringBBox(str, rx, ry);
 
   for (uint i = 0; i < 4; ++i) {
-    x[i] = CMathGen::Round(rx[i]);
-    y[i] = CMathGen::Round(ry[i]);
+    x[i] = CMathRound::Round(rx[i]);
+    y[i] = CMathRound::Round(ry[i]);
   }
 }
 
