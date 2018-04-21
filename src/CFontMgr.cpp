@@ -1,15 +1,24 @@
 #include <CFontMgr.h>
 
+static CFontMgr *s_instance;
+
 CFontMgr *
 CFontMgr::
-getInstance()
+instance()
 {
-  static CFontMgr *mgr;
+  if (! s_instance)
+    s_instance = new CFontMgr;
 
-  if (! mgr)
-    mgr = new CFontMgr;
+  return s_instance;
+}
 
-  return mgr;
+void
+CFontMgr::
+release()
+{
+  delete s_instance;
+
+  s_instance = nullptr;
 }
 
 CFontMgr::

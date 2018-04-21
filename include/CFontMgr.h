@@ -1,14 +1,16 @@
 #ifndef CFONT_MGR_H
 #define CFONT_MGR_H
 
-#define CFontMgrInst CFontMgr::getInstance()
+#define CFontMgrInst CFontMgr::instance()
 
 #include <CFont.h>
 #include <list>
 
 class CFontMgr {
  public:
-  static CFontMgr *getInstance();
+  static CFontMgr *instance();
+
+  static void release();
 
   CFontMgr();
 
