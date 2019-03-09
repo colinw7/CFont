@@ -3,7 +3,7 @@
 
 #include <CRefPtr.h>
 #include <CFontStyle.h>
-#include <CImageLib.h>
+#include <CImagePtr.h>
 #include <sys/types.h>
 #include <map>
 
@@ -167,16 +167,9 @@ class CFont {
 
   virtual std::string getXFontName() const;
 
-  virtual CImagePtr getStringImage(const std::string &) {
-    std::cerr << "undefined: CFont::getStringImage" << std::endl;
-    return CImagePtr();
-  }
+  virtual CImagePtr getStringImage(const std::string &);
 
-  virtual CImagePtr getCharImage(char c) {
-    std::string str(&c, 1);
-
-    return getStringImage(str);
-  }
+  virtual CImagePtr getCharImage(char c);
 
   void print(std::ostream &os) const {
     os << getFamily() << ":" << fontStyleToString(getStyle()) << ":" <<

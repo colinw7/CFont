@@ -1,6 +1,8 @@
 #include <CFont.h>
 #include <CFontMgr.h>
 #include <CMathRound.h>
+#include <CMathGen.h>
+#include <CImageLib.h>
 #include <CStrUtil.h>
 
 CFontFamily::
@@ -197,6 +199,23 @@ getXFontName() const
   }
 
   return x_font_name_;
+}
+
+CImagePtr
+CFont::
+getStringImage(const std::string &)
+{
+  std::cerr << "undefined: CFont::getStringImage" << std::endl;
+  return CImagePtr();
+}
+
+CImagePtr
+CFont::
+getCharImage(char c)
+{
+  std::string str(&c, 1);
+
+  return getStringImage(str);
 }
 
 bool
