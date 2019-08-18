@@ -1,7 +1,7 @@
 #ifndef CFONT_H
 #define CFONT_H
 
-#include <CRefPtr.h>
+#include <CFontPtr.h>
 #include <CFontStyle.h>
 #include <CImagePtr.h>
 #include <sys/types.h>
@@ -77,12 +77,6 @@ class CFontFamily {
   std::string name_;
   FontDefMap  font_defs_;
 };
-
-//---
-
-class CFont;
-
-typedef CRefPtr<CFont> CFontPtr;
 
 //---
 
