@@ -47,11 +47,6 @@ struct CFontDef {
            double angle1=0, uint x_res1=100, uint y_res1=100) :
    style(style1), size(size1), angle(angle1), x_res(x_res1), y_res(y_res1) {
   }
-
-  CFontDef(const CFontDef &font_def) :
-   style(font_def.style), size(font_def.size), angle(font_def.angle),
-   x_res(font_def.x_res), y_res(font_def.y_res) {
-  }
 };
 
 //---
