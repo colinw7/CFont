@@ -134,8 +134,10 @@ class CFont {
   virtual double getCharHeight  () const { return getCharAscent() + getCharDescent(); }
   virtual uint   getICharHeight () const { return uint(getCharHeight()); }
 
-  virtual double getStringWidth (const std::string &str) const { return str.size()*getCharWidth(); }
-  virtual uint   getIStringWidth(const std::string &str) const { return uint(getStringWidth(str)); }
+  virtual double getStringWidth (const std::string &str) const {
+    return double(str.size())*getCharWidth(); }
+  virtual uint   getIStringWidth(const std::string &str) const {
+    return uint(getStringWidth(str)); }
 
   virtual void getStringBBox (const std::string &str, double x[4], double y[4]) const;
   virtual void getIStringBBox(const std::string &str, int    x[4], int    y[4]) const;
