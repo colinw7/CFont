@@ -73,7 +73,7 @@ lookupFontDef(CFontStyle style, uint size, uint angle)
 CFont::
 CFont(const std::string &family, CFontStyle style, double size, double angle, double char_angle,
       int x_res, int y_res) :
- family_(family), font_def_(style, size, angle, x_res, y_res), char_angle_(char_angle)
+ family_(family), font_def_(style, size, angle, uint(x_res), uint(y_res)), char_angle_(char_angle)
 {
   id_ = getNextId();
 }
@@ -117,7 +117,8 @@ CFontPtr
 CFont::
 dup() const
 {
-  return dup(getFamily(), getStyle(), getSize(), getAngle(), getCharAngle(), getXRes(), getYRes());
+  return dup(getFamily(), getStyle(), getSize(), getAngle(), getCharAngle(),
+             int(getXRes()), int(getYRes()));
 }
 
 CFontPtr
@@ -130,7 +131,7 @@ dup(const std::string &full_name) const
 
   decodeXFontName(full_name, family, style, size, x_res, y_res);
 
-  return dup(family, style, size, 0, 0, x_res, y_res);
+  return dup(family, style, size, 0, 0, int(x_res), int(y_res));
 }
 
 CFontPtr
@@ -138,7 +139,7 @@ CFont::
 dup(const std::string &family, CFontStyle style, double size, double angle, double char_angle,
     int x_res, int y_res) const
 {
-  CFont *font = new CFont(family, style, size, angle, char_angle, x_res, y_res);
+  auto *font = new CFont(family, style, size, angle, char_angle, int(x_res), int(y_res));
 
   return CFontPtr(font);
 }
@@ -152,7 +153,8 @@ rotated(double dangle) const
   while (angle <  0  ) angle += 360;
   while (angle >= 360) angle -= 360;
 
-  return dup(getFamily(), getStyle(), getSize(), angle, getCharAngle(), getXRes(), getYRes());
+  return dup(getFamily(), getStyle(), getSize(), angle, getCharAngle(),
+             int(getXRes()), int(getYRes()));
 }
 
 void
@@ -227,7 +229,7 @@ decodeXFontName(const std::string &x_font_name, std::string &family, CFontStyle 
 
   CStrUtil::addFields(x_font_name, fields, "-");
 
-  uint num_fields = fields.size();
+  auto num_fields = fields.size();
 
   if (num_fields != 15)
     return false;
@@ -357,14 +359,14 @@ decodeFontName(const std::string &name, std::string &family, CFontStyle &style, 
 
   CStrUtil::addFields(name, words, "-");
 
-  uint num_words = words.size();
+  auto num_words = words.size();
 
   if (num_words != 3)
     return false;
 
   family = words[0];
   style  = CFont::stringToFontStyle(words[1]);
-  size   = CStrUtil::toInteger(words[2]);
+  size   = uint(CStrUtil::toInteger(words[2]));
 
   if (size <= 3) {
     size = 10;
