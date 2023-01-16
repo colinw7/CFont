@@ -54,14 +54,13 @@ lookupFont(const std::string &family, CFontStyle style, double size,
 
   CFontPtr ptr;
 
-  if (prototype_.isValid())
+  if (prototype_)
     ptr = prototype_->dup(family, style, size, angle, char_angle, int(x_res), int(y_res));
   else {
     if (getenv("CFONT_PROTO_DEBUG"))
       std::cerr << "Warning: no font prototype" << std::endl;
 
-    CFont *font =
-      new CFont(family, style, size, angle, char_angle, int(x_res), int(y_res));
+    auto *font = new CFont(family, style, size, angle, char_angle, int(x_res), int(y_res));
 
     ptr = CFontPtr(font);
   }
@@ -83,7 +82,7 @@ lookupFont(const std::string &full_name)
 
   CFontPtr ptr;
 
-  if (prototype_.isValid()) {
+  if (prototype_) {
     ptr = prototype_->dup(full_name);
 
     addFont(ptr);

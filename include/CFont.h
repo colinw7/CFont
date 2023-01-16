@@ -90,8 +90,6 @@ class CFont {
 
   CFont &operator=(const CFont &font);
 
-  friend class CRefPtr<CFont>;
-
   static uint getNextId() {
     static uint id;
 

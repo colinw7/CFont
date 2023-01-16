@@ -1,10 +1,10 @@
 #ifndef CFONT_PTR_H
 #define CFONT_PTR_H
 
-#include <CRefPtr.h>
+#include <memory>
 
 class CFont;
 
-typedef CRefPtr<CFont> CFontPtr;
+using CFontPtr = std::shared_ptr<CFont>;
 
 #endif
