@@ -1,6 +1,5 @@
 #include <CFreeType.h>
 #include <CFontMgr.h>
-#include <CAutoPtr.h>
 
 #include <ft2build.h>
 #include <freetype/ftoutln.h>
@@ -170,7 +169,7 @@ bool
 CFreeType::
 setFont(CFontPtr font)
 {
-  if (! font.isValid())
+  if (! font)
     return false;
 
   font_ = font;
@@ -202,7 +201,7 @@ setFont(CFontPtr font)
   int x_res       = 75; // dpi
   int y_res       = 75;
 
-  error = FT_Set_Char_Size(face_, char_width, char_height, x_res, y_res);
+  error = FT_Set_Char_Size(face_, char_width, char_height, FT_UInt(x_res), FT_UInt(y_res));
 
   // error = FT_Set_Pixel_Sizes(face_, char_width, char_height);
 
@@ -235,7 +234,7 @@ getChar(char c)
 {
   if (! face_) return false;
 
-  uint c1 = (c >= 0 ? c : 256 + c);
+  uint c1 = uint(c >= 0 ? c : 256 + c);
 
 #if 0
   FT_UInt glyph_index = FT_Get_Char_Index(face_, c1);
@@ -268,7 +267,7 @@ bool
 CFreeType::
 drawString(CFreeTypeImageRenderer *renderer, const char *s, double *x, double *y)
 {
-  uint len = strlen(s);
+  auto len = strlen(s);
 
   for (uint i = 0; i < len; ++i)
     (void) drawChar(renderer, s[i], x, y);
@@ -285,8 +284,8 @@ drawChar(CFreeTypeImageRenderer *renderer, char c, double *x, double *y)
   drawBitmap(renderer, &face_->glyph->bitmap, *x + face_->glyph->bitmap_left,
              *y - face_->glyph->bitmap_top);
 
-  *x += face_->glyph->advance.x/64.0;
-  *y += face_->glyph->advance.y/64.0;
+  *x += double(face_->glyph->advance.x)/64.0;
+  *y += double(face_->glyph->advance.y)/64.0;
 
   return true;
 }
@@ -310,7 +309,7 @@ drawBitmap(CFreeTypeImageRenderer *renderer, FT_Bitmap *bitmap, double x, double
       if (bitmap->pixel_mode == FT_PIXEL_MODE_GRAY)
         gray = pixel/255.0;
 
-      renderer->drawPoint(CIPoint2D(x + c, y + r), gray);
+      renderer->drawPoint(CIPoint2D(int(x + c), int(y + r)), gray);
     }
 
     p += bitmap->pitch;
@@ -337,7 +336,7 @@ imageString(CImagePtr image, const char *s, const CRGBA &color)
 
   int x1 = 0, y1 = 0;
 
-  uint len = strlen(s);
+  auto len = strlen(s);
 
   for (uint i = 0; i < len; ++i) {
     y1 = 0;
@@ -353,7 +352,7 @@ imageString(CImagePtr image, const char *s, const CRGBA &color)
 
     w = x2;
 
-    int ascent1  = char_image->getHeight();
+    int ascent1  = int(char_image->getHeight());
     int descent1 = 0;
 
     if (t < 0) {
@@ -373,7 +372,7 @@ imageString(CImagePtr image, const char *s, const CRGBA &color)
 
   image->setRGBAData(CRGBA(0,0,0,0));
 
-  uint n = char_images.size();
+  auto n = char_images.size();
 
   for (uint i = 0; i < n; ++i) {
     ImageXY &char_image = char_images[i];
@@ -406,14 +405,14 @@ imageChar1(CImagePtr image, char c, int *l, int *t, int *x, int *y, const CRGBA 
   *l = face_->glyph->bitmap_left;
 
   if (face_->glyph->bitmap_top > 0)
-    *t = face_->glyph->bitmap_top - face_->glyph->bitmap.rows;
+    *t = face_->glyph->bitmap_top - int(face_->glyph->bitmap.rows);
   else
     *t = face_->glyph->bitmap_top;
 
   imageBitmap(image, &face_->glyph->bitmap, color);
 
-  *x += face_->glyph->advance.x/64;
-  *y += face_->glyph->advance.y/64;
+  *x += int(face_->glyph->advance.x/64);
+  *y += int(face_->glyph->advance.y/64);
 
   return true;
 }
@@ -422,7 +421,7 @@ void
 CFreeType::
 imageBitmap(CImagePtr image, FT_Bitmap *bitmap, const CRGBA &color)
 {
-  image->setDataSize(bitmap->width, bitmap->rows);
+  image->setDataSize(int(bitmap->width), int(bitmap->rows));
 
   image->setRGBAData(CRGBA(0,0,0,0));
 
@@ -443,10 +442,10 @@ imageBitmap(CImagePtr image, FT_Bitmap *bitmap, const CRGBA &color)
       if (bitmap->pixel_mode == FT_PIXEL_MODE_GRAY) {
         double gray = pixel/255.0;
 
-        image->setRGBAPixel(col, row, CRGBA(r, g, b, gray));
+        image->setRGBAPixel(int(col), int(row), CRGBA(r, g, b, gray));
       }
       else
-        image->setRGBAPixel(col, row, CRGBA(r, g, b, 1));
+        image->setRGBAPixel(int(col), int(row), CRGBA(r, g, b, 1));
     }
 
     p += bitmap->pitch;
@@ -457,7 +456,7 @@ bool
 CFreeType::
 strokeString(CFreeTypePathRenderer *renderer, const char *s, double *x, double *y)
 {
-  uint len = strlen(s);
+  auto len = strlen(s);
 
   for (uint i = 0; i < len; ++i)
     (void) strokeChar(renderer, s[i], x, y);
@@ -469,7 +468,7 @@ bool
 CFreeType::
 fillString(CFreeTypePathRenderer *renderer, const char *s, double *x, double *y)
 {
-  uint len = strlen(s);
+  auto len = strlen(s);
 
   for (uint i = 0; i < len; ++i)
     (void) fillChar(renderer, s[i], x, y);
@@ -481,7 +480,7 @@ bool
 CFreeType::
 pathString(CFreeTypePathRenderer *renderer, const char *s, double *x, double *y)
 {
-  if (! font_.isValid())
+  if (! font_)
     return false;
 
   const std::string &family = font_->getFamily();
@@ -490,7 +489,7 @@ pathString(CFreeTypePathRenderer *renderer, const char *s, double *x, double *y)
 
   renderer->init();
 
-  uint len = strlen(s);
+  auto len = strlen(s);
 
   uint i = 0;
 
@@ -525,7 +524,7 @@ pathString(CFreeTypePathRenderer *renderer, const char *s, double *x, double *y)
       else if (num == 3)
         font1 = CFontMgrInst->lookupFont(family, CFONT_STYLE_ITALIC, size);
 
-      if (font1.isValid())
+      if (font1)
         setFont(font1);
     }
     else {
@@ -576,7 +575,7 @@ pathChar(CFreeTypePathRenderer *renderer, char c, double *x, double *y)
 
   renderer_ = renderer;
 
-  uint c1 = (c >= 0 ? c : 256 + c);
+  uint c1 = uint(c >= 0 ? c : 256 + c);
 
   FT_UInt glyph_index = FT_Get_Char_Index(face_, c1);
 
@@ -589,10 +588,10 @@ pathChar(CFreeTypePathRenderer *renderer, char c, double *x, double *y)
   pos_ = CPoint2D(*x, *y);
 
   FT_Outline_Funcs outlineMethods = {
-    (FT_Outline_MoveTo_Func ) CFreeType::traceMoveto,
-    (FT_Outline_LineTo_Func ) CFreeType::traceLineto,
-    (FT_Outline_ConicTo_Func) CFreeType::traceBezier2,
-    (FT_Outline_CubicTo_Func) CFreeType::traceBezier3,
+    FT_Outline_MoveTo_Func (CFreeType::traceMoveto),
+    FT_Outline_LineTo_Func (CFreeType::traceLineto),
+    FT_Outline_ConicTo_Func(CFreeType::traceBezier2),
+    FT_Outline_CubicTo_Func(CFreeType::traceBezier3),
     0, // shift
     0  // delta
   };
@@ -605,8 +604,8 @@ pathChar(CFreeTypePathRenderer *renderer, char c, double *x, double *y)
 
   renderer->close();
 
-  *x += face_->glyph->advance.x/64.0;
-  *y += face_->glyph->advance.y/64.0;
+  *x += double(face_->glyph->advance.x)/64.0;
+  *y += double(face_->glyph->advance.y)/64.0;
 
   return true;
 }
@@ -620,8 +619,8 @@ traceMoveto(FT_Vector *v, CFreeType *th)
   if (th->renderer_->getCurrentPoint(current))
     th->renderer_->close();
 
-  double x = v->x/64.0;
-  double y = v->y/64.0;
+  double x = double(v->x)/64.0;
+  double y = double(v->y)/64.0;
 
   CPoint2D p = th->pos_ + CPoint2D(x, y);
 
@@ -636,8 +635,8 @@ int
 CFreeType::
 traceLineto(FT_Vector *v, CFreeType *th)
 {
-  double x = v->x/64.0;
-  double y = v->y/64.0;
+  double x = double(v->x)/64.0;
+  double y = double(v->y)/64.0;
 
   CPoint2D p = th->pos_ + CPoint2D(x, y);
 
@@ -652,10 +651,10 @@ int
 CFreeType::
 traceBezier2(FT_Vector *v1, FT_Vector *v2, CFreeType *th)
 {
-  double x1 = v1->x/64.0;
-  double y1 = v1->y/64.0;
-  double x2 = v2->x/64.0;
-  double y2 = v2->y/64.0;
+  double x1 = double(v1->x)/64.0;
+  double y1 = double(v1->y)/64.0;
+  double x2 = double(v2->x)/64.0;
+  double y2 = double(v2->y)/64.0;
 
   CPoint2D p1 = th->pos_ + CPoint2D(x1, y1);
   CPoint2D p2 = th->pos_ + CPoint2D(x2, y2);
@@ -671,12 +670,12 @@ int
 CFreeType::
 traceBezier3(FT_Vector *v1, FT_Vector *v2, FT_Vector *v3, CFreeType *th)
 {
-  double x1 = v1->x/64.0;
-  double y1 = v1->y/64.0;
-  double x2 = v2->x/64.0;
-  double y2 = v2->y/64.0;
-  double x3 = v3->x/64.0;
-  double y3 = v3->y/64.0;
+  double x1 = double(v1->x)/64.0;
+  double y1 = double(v1->y)/64.0;
+  double x2 = double(v2->x)/64.0;
+  double y2 = double(v2->y)/64.0;
+  double x3 = double(v3->x)/64.0;
+  double y3 = double(v3->y)/64.0;
 
   CPoint2D p1 = th->pos_ + CPoint2D(x1, y1);
   CPoint2D p2 = th->pos_ + CPoint2D(x2, y2);

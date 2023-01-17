@@ -29,9 +29,7 @@ class CFreeTypeImageRenderer {
 
 class CFreeTypePathRenderer {
  public:
-  CFreeTypePathRenderer() :
-   current_(0,0), current_set_(false) {
-  }
+  CFreeTypePathRenderer() { }
 
   virtual ~CFreeTypePathRenderer() { }
 
@@ -64,18 +62,21 @@ class CFreeTypePathRenderer {
 
  private:
   CPoint2D current_;
-  bool     current_set_;
+  bool     current_set_ { false };
 };
 
-class CFreeTypeMgr {
- private:
-  CFreeType *free_type_;
+//---
 
+class CFreeTypeMgr {
  public:
   static CFreeTypeMgr *getInstance();
 
  private:
   CFreeTypeMgr();
+
+  CFreeTypeMgr(const CFreeTypeMgr &rhs) = delete;
+  CFreeTypeMgr &operator=(const CFreeTypeMgr &rhs) = delete;
+
  ~CFreeTypeMgr();
 
  public:
@@ -100,13 +101,18 @@ class CFreeTypeMgr {
   bool pathChar(CFreeTypePathRenderer *path, char c, double *x, double *y);
 
  private:
-  CFreeTypeMgr(const CFreeTypeMgr &rhs);
-  CFreeTypeMgr &operator=(const CFreeTypeMgr &rhs);
+  CFreeType *free_type_ { nullptr };
 };
+
+//---
 
 class CFreeType {
  public:
   CFreeType();
+
+  CFreeType(const CFreeType &rhs) = delete;
+  CFreeType &operator=(const CFreeType &rhs) = delete;
+
  ~CFreeType();
 
   CFontPtr getFont() const { return font_; }
@@ -148,17 +154,13 @@ class CFreeType {
   static int traceBezier3(FT_Vector *v1, FT_Vector *v2, FT_Vector *v3, CFreeType *th);
 
  private:
-  CFreeType(const CFreeType &rhs);
-  CFreeType &operator=(const CFreeType &rhs);
-
- private:
   CConfig    config_;
   FT_Library library_;
   FT_Face    face_;
   CFontPtr   font_;
 
-  mutable CPoint2D              pos_;
-  mutable CFreeTypePathRenderer *renderer_;
+  mutable CPoint2D               pos_;
+  mutable CFreeTypePathRenderer* renderer_ { nullptr };
 };
 
 #endif
